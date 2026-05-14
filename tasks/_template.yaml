@@ -4,6 +4,13 @@ n: 1
 provider: openai
 model: gpt-4o-mini
 prompt_name: agent
+tools:
+  - calc.convert_speed
+  - calc.calculate_power
+  - calc.calculate_transmission
+model_settings:
+  temperature: 1.0
+  max_tokens: 4096
 
 tasks:
   # --- No tools required ---

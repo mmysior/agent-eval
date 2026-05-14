@@ -21,6 +21,11 @@ def prepare(tasks_yaml: str | Path) -> tuple[Path, int]:
 
     tasks: list[dict] = cfg["tasks"]
     n: int = cfg.get("n", 1)
+    provider: str = cfg.get("provider", "")
+    model: str = cfg.get("model", "")
+    prompt_name: str = cfg.get("prompt_name", "agent")
+    model_settings: dict = cfg.get("model_settings") or {}
+    tools: list[str] = cfg.get("tools") or []
 
     total = 0
     with open(input_path, "w") as f:
@@ -32,6 +37,11 @@ def prepare(tasks_yaml: str | Path) -> tuple[Path, int]:
                 row = {
                     "id": str(uuid.uuid4()),
                     "scenario_id": scenario_id,
+                    "provider": provider,
+                    "model": model,
+                    "prompt_name": prompt_name,
+                    "model_settings": model_settings,
+                    "tools": tools,
                     "user_message": user_message,
                     "image": image,
                     "metadata": task.get("metadata", {}),
@@ -74,31 +84,16 @@ async def run(
                 continue
 
             try:
-                result = await run_agent(agent, row["user_message"], image_path=row.get("image"))
-                output_row = {
-                    "id": row["id"],
-                    "scenario_id": row["scenario_id"],
-                    "user_message": row["user_message"],
-                    "image": row["image"],
-                    "metadata": row["metadata"],
-                    "output": result.output,
-                    "messages": to_jsonable_python(result.all_messages),
-                    "usage": to_jsonable_python(result.usage),
-                    "error": None,
-                }
+                result = await run_agent(
+                    agent,
+                    row["user_message"],
+                    image_path=row.get("image"),
+                    model_settings=row.get("model_settings"),
+                )
+                output_row = {"id": row["id"], "output": result.output, "messages": to_jsonable_python(result.all_messages), "usage": to_jsonable_python(result.usage), "error": None}
                 succeeded += 1
             except Exception as e:
-                output_row = {
-                    "id": row["id"],
-                    "scenario_id": row["scenario_id"],
-                    "user_message": row["user_message"],
-                    "image": row["image"],
-                    "metadata": row["metadata"],
-                    "output": None,
-                    "messages": [],
-                    "usage": None,
-                    "error": str(e),
-                }
+                output_row = {"id": row["id"], "output": None, "messages": [], "usage": None, "error": str(e)}
                 failed += 1
 
             f.write(json.dumps(output_row) + "\n")

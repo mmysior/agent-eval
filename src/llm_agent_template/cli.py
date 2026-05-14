@@ -13,21 +13,12 @@ from llm_agent_template.agent import get_agent
 from llm_agent_template.core.config import config
 from llm_agent_template.core.logging import setup_logging
 from llm_agent_template.pipeline import prepare, run
-from llm_agent_template.tools.calc import calculate_power, calculate_transmission, convert_speed
+from llm_agent_template.tools import load_tools
 
 ORANGE = "dark_orange"
 GRAY = "grey50"
 
 console = Console()
-
-
-def _get_agent():
-    return get_agent(
-        provider=config.DEFAULT_PROVIDER,
-        model=config.DEFAULT_MODEL,
-        prompt_name="agent",
-        tools=(convert_speed, calculate_power, calculate_transmission),
-    )
 
 
 @dataclass
@@ -122,8 +113,6 @@ def run_cmd(file: Path | None) -> None:
     all_stats = [_analyze(f) for f in input_files]
     _print_preamble(all_stats)
 
-    agent = _get_agent()
-
     with Progress(
         SpinnerColumn(style=ORANGE),
         TextColumn("{task.description}"),
@@ -133,6 +122,14 @@ def run_cmd(file: Path | None) -> None:
         console=console,
     ) as progress:
         for stats in all_stats:
+            first_row = json.loads(stats.input_path.read_text().splitlines()[0])
+            agent = get_agent(
+                provider=first_row["provider"],
+                model=first_row["model"],
+                prompt_name=first_row["prompt_name"],
+                tools=load_tools(first_row.get("tools") or []),
+            )
+
             task_id = progress.add_task(
                 f"[{GRAY}]{stats.input_path.name}[/{GRAY}]",
                 total=stats.total,

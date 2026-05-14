@@ -6,6 +6,7 @@ from typing import Callable
 
 from pydantic_ai import Agent, BinaryContent, Tool
 from pydantic_ai.messages import ModelMessage
+from pydantic_ai.settings import ModelSettings
 from pydantic_ai.usage import RunUsage, UsageLimits
 
 from llm_agent_template.core.config import config
@@ -39,6 +40,7 @@ async def run_agent(
     agent: Agent,
     user_message: str,
     image_path: str | Path | None = None,
+    model_settings: dict | None = None,
     message_history: list[ModelMessage] | None = None,
 ) -> AgentResult:
     if image_path is not None:
@@ -52,6 +54,7 @@ async def run_agent(
         prompt,
         message_history=message_history or [],
         usage_limits=UsageLimits(request_limit=config.TOOL_ITERATION_LIMIT),
+        model_settings=ModelSettings(**(model_settings or {})),
     )
     return AgentResult(
         output=result.output,
