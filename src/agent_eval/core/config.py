@@ -5,9 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 def _get_project_root() -> Path:
     current = Path(__file__).parent
-    while (
-        not (current / "uv.lock").exists() and not (current / "pyproject.toml").exists()
-    ):
+    while not (current / "uv.lock").exists() and not (current / "pyproject.toml").exists():
         if current.parent == current:
             return Path.cwd()
         current = current.parent
@@ -26,6 +24,7 @@ class Config(BaseSettings):
     # ==========================================
     DEFAULT_PROVIDER: str = ""
     DEFAULT_MODEL: str = "wcss-gpt-oss-20b"
+    DEFAULT_PROMPT: str = "agent"
     TOOL_ITERATION_LIMIT: int = 10
 
     # ==========================================
