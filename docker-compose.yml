@@ -1,0 +1,9 @@
+services:
+  agent:
+    build: .
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+      - ./tasks:/app/tasks
+      - ./prompts:/app/prompts
+    tty: true
