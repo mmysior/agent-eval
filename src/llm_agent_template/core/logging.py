@@ -2,8 +2,14 @@ import logging
 
 import colorlog
 from langfuse import Langfuse
+from tqdm import tqdm
 
 from llm_agent_template.core.config import config
+
+
+class TqdmHandler(colorlog.StreamHandler):
+    def emit(self, record: logging.LogRecord) -> None:
+        tqdm.write(self.format(record))
 
 
 def setup_logging():
@@ -13,7 +19,7 @@ def setup_logging():
     if root_logger.handlers:
         return
 
-    handler = colorlog.StreamHandler()
+    handler = TqdmHandler()
     handler.setFormatter(
         colorlog.ColoredFormatter(
             "%(log_color)s%(levelname)s:%(reset)s %(asctime)s [%(name)s] %(message)s",
