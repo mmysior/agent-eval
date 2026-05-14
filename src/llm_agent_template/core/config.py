@@ -66,9 +66,16 @@ class Config(BaseSettings):
 
     @property
     def data_path(self) -> Path:
-        """Get absolute path to data directory."""
         path = Path(self.DATA_DIR)
         return path if path.is_absolute() else self.PROJECT_ROOT / path
+
+    @property
+    def input_path(self) -> Path:
+        return self.data_path / "input"
+
+    @property
+    def output_path(self) -> Path:
+        return self.data_path / "output"
 
 
 config = Config()

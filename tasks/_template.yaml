@@ -1,6 +1,6 @@
 name: gear_design
-input_file: data/input/gear_design.jsonl
-output_file: data/output/gear_design.jsonl
+file: gear_design.jsonl
+n: 1
 provider: openai
 model: gpt-4o-mini
 prompt_name: agent
