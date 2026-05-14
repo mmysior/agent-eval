@@ -4,6 +4,7 @@ import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import yaml
 from pydantic_ai import Agent
@@ -107,7 +108,7 @@ async def run(
     name: str,
     agent: Agent,
     tool_definitions: dict,
-    on_row_done: Callable[[], None] | None = None,
+    on_row_done: Callable[[], Any] | None = None,
 ) -> tuple[int, int]:
     input_path = config.input_path / name
     output_path = config.output_path / name
