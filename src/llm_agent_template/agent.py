@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Callable
 
 from pydantic_ai import Agent, Tool
@@ -17,42 +18,33 @@ class AgentResult:
     usage: RunUsage
 
 
-async def agent(
-    user_message: str,
-    *,
-    tools: list[Tool | Callable] | None = None,
-    message_history: list[ModelMessage] | None = None,
-    provider: str = config.DEFAULT_PROVIDER,
-    model: str = config.DEFAULT_MODEL,
-    prompt_name: str | None = None,
-) -> AgentResult:
-    prompt = get_prompt(prompt_name) if prompt_name else get_prompt("agent")
-    _agent = Agent(
+@lru_cache
+def get_agent(
+    provider: str,
+    model: str,
+    prompt_name: str,
+    tools: tuple[Tool | Callable, ...] = (),
+) -> Agent:
+    prompt = get_prompt(prompt_name)
+    return Agent(
         get_model(provider, model),
         instructions=prompt.compile(),
-        tools=tools or [],
+        tools=list(tools),
     )
 
-    result = await _agent.run(
+
+async def run_agent(
+    agent: Agent,
+    user_message: str,
+    message_history: list[ModelMessage] | None = None,
+) -> AgentResult:
+    result = await agent.run(
         user_message,
         message_history=message_history or [],
         usage_limits=UsageLimits(request_limit=config.TOOL_ITERATION_LIMIT),
     )
-
     return AgentResult(
         output=result.output,
         all_messages=result.all_messages(),
         usage=result.usage,
     )
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    from llm_agent_template.utils import save_json
-
-    async def main():
-        result = await agent("What is the capital of France?")
-        save_json(result, "agent_result.json")
-
-    asyncio.run(main())

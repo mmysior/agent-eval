@@ -17,11 +17,11 @@ async def run_pipeline(
     agent: Callable[[str], Awaitable[AgentResult]],
 ) -> None:
     with open(tasks_yaml) as f:
-        config = yaml.safe_load(f)
+        config: dict = yaml.safe_load(f)
 
     input_path = Path(config["input_file"])
     output_path = Path(config["output_file"])
-    tasks = config["tasks"]
+    tasks: list[dict] = config["tasks"]
 
     input_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -42,7 +42,7 @@ async def run_pipeline(
 
     with open(output_path, "w") as f:
         for i, row in enumerate(rows, 1):
-            logger.info("[%d/%d] %s...", i, len(rows), "Generating response for user message")
+            logger.info("[%d/%d] %s...", i, len(rows), row["user_message"][:20])
             result = await agent(row["user_message"])
             output_row = {
                 "id": row["id"],
