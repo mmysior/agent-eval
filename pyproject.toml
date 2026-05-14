@@ -1,7 +1,24 @@
 [project]
-name = "llm-agent-template"
+name = "agent-eval"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = []
+requires-python = ">=3.12, <3.14"
+dependencies = [
+    "click>=8.3.3",
+    "colorlog>=6.10.1",
+    "jinja2>=3.1.6",
+    "mcp[cli]>=1.27.1",
+    "pydantic>=2.13.4",
+    "pydantic-ai>=1.96.0",
+    "pydantic-settings>=2.14.1",
+    "python-frontmatter>=1.1.0",
+    "tqdm>=4.67.3",
+]
+
+[project.scripts]
+agent-eval = "agent_eval.cli:cli"
+
+[build-system]
+requires = ["uv_build>=0.8.14,<0.9.0"]
+build-backend = "uv_build"

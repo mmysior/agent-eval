@@ -1,0 +1,112 @@
+{
+  // Editor settings
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.rulers": [120],
+  "editor.wordWrap": "off",
+  "editor.minimap.enabled": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  // Files
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/*.pyc": true,
+    "**/.DS_Store": true,
+    "**/.git": true,
+    "**/.venv": false,
+    "**/venv": true,
+    "**/.env": false
+  },
+  "files.watcherExclude": {
+    "**/__pycache__/**": true,
+    "**/.venv/**": true,
+    "**/.git/objects/**": true
+  },
+  // Search
+  "search.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.venv": true,
+    "**/venv": true
+  },
+  // Python settings
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingImports": "none",
+    "reportUnusedImport": "information",
+    "reportUnusedVariable": "warning"
+  },
+  "python.analysis.extraPaths": ["${workspaceFolder}/src"],
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.terminal.activateEnvironment": false,
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  // Formatting
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+  },
+  "[json]": {
+    "editor.wordWrap": "on"
+  },
+  "[jsonc]": {
+    "editor.wordWrap": "on"
+  },
+  "[jinja]": {
+    "editor.wordWrap": "on"
+  },
+  "[jinja-xml]": {
+    "editor.wordWrap": "on"
+  },
+  // Linting - Ruff (recommended for FastAPI projects)
+  // "ruff.lint.args": ["--config=${workspaceFolder}/backend/pyproject.toml"],
+  // "ruff.format.args": ["--config=${workspaceFolder}/backend/pyproject.toml"],
+  // Test settings
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "python.testing.pytestArgs": ["-v"],
+  // Git
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  // Terminal
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.fontSize": 16,
+  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.env.osx": {},
+  // Explorer
+  "explorer.compactFolders": false,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "pyproject.toml": "uv.lock, poetry.lock, Pipfile, requirements*.txt",
+    ".env": ".env.*, .envrc",
+    "*.py": "${capture}.pyi, ${capture}_test.py, test_${capture}.py",
+    "__init__.py": "py.typed"
+  },
+  // Material Icon Theme settings
+  "material-icon-theme.folders.associations": {
+    "scratchpad": "jupyter",
+    "packages": "packages",
+    "resources": "tools",
+  },
+}
