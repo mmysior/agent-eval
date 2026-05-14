@@ -23,16 +23,16 @@ class AgentResult:
 
 @lru_cache
 def get_agent(
-    provider: str,
-    model: str,
-    prompt_name: str,
+    prompt_name: str = config.DEFAULT_PROMPT,
+    provider: str = config.DEFAULT_PROVIDER,
+    model: str = config.DEFAULT_MODEL,
     tools: tuple[Tool | Callable, ...] = (),
 ) -> Agent:
     prompt = get_prompt(prompt_name)
     return Agent(
         get_model(provider, model),
         instructions=prompt.compile(),
-        tools=list(tools),
+        tools=tools,
     )
 
 

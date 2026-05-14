@@ -1,124 +1,66 @@
 import hashlib
 import json
-import uuid
-from collections.abc import Callable
-from dataclasses import dataclass
+import logging
 from pathlib import Path
-from typing import Any
 
 import yaml
 from pydantic_ai import Agent
 from pydantic_core import to_jsonable_python
+from tqdm import tqdm
 
-from agent_eval.agent import get_agent, run_agent
+from agent_eval.agent import run_agent
 from agent_eval.core.config import config
-from agent_eval.tools import extract_definitions, load_tools
+
+logger = logging.getLogger(__name__)
 
 
-@dataclass
-class FileStats:
-    name: str
-    input_path: Path
-    output_path: Path
-    total: int
-    completed: int
-
-    @property
-    def remaining(self) -> int:
-        return self.total - self.completed
-
-
-def analyze(name: str) -> FileStats:
-    input_path = config.input_path / name
-    output_path = config.output_path / name
-
-    with open(input_path) as f:
-        total = sum(1 for _ in f)
-
-    completed = 0
-    if output_path.exists():
-        with open(output_path) as f:
-            for line in f:
-                if json.loads(line).get("error") is None:
-                    completed += 1
-
-    return FileStats(
-        name=name,
-        input_path=input_path,
-        output_path=output_path,
-        total=total,
-        completed=completed,
-    )
-
-
-def agent_from_yaml(tasks_yaml: str | Path) -> tuple[Agent, dict]:
-    with open(tasks_yaml) as f:
-        cfg: dict = yaml.safe_load(f)
-
-    tool_paths = cfg.get("tools") or []
-    agent = get_agent(
-        provider=cfg.get("provider", ""),
-        model=cfg.get("model", ""),
-        prompt_name=cfg.get("prompt_name", "agent"),
-        tools=load_tools(tool_paths),
-    )
-    return agent, extract_definitions(tool_paths)
-
-
-def prepare(tasks_yaml: str | Path) -> tuple[str, int]:
+def prepare(tasks_yaml: str | Path) -> Path:
     tasks_yaml = Path(tasks_yaml)
     with open(tasks_yaml) as f:
         cfg: dict = yaml.safe_load(f)
 
-    name = tasks_yaml.stem + ".jsonl"
-    input_path = config.input_path / name
+    input_path = config.input_path / (tasks_yaml.stem + ".jsonl")
     input_path.parent.mkdir(parents=True, exist_ok=True)
+    logger.info("Preparing %s -> %s", tasks_yaml.name, input_path)
 
     n: int = cfg.get("n", 1)
     spec = {
-        "provider": cfg.get("provider", ""),
         "model": cfg.get("model", ""),
-        "prompt_name": cfg.get("prompt_name", "agent"),
+        "provider": cfg.get("provider", ""),
         "model_settings": cfg.get("model_settings") or {},
-        "tools": cfg.get("tools") or [],
     }
 
-    total = 0
     with open(input_path, "w") as f:
         for task in cfg["tasks"]:
             user_message = task["user_message"]
-            image = task["image"]
+            image = task.get("image")
             scenario_id = hashlib.sha256(f"{user_message}{image}".encode()).hexdigest()[:16]
-            for _ in range(n):
+            for i in range(n):
+                row_id = hashlib.sha256(f"{user_message}{image}{i}".encode()).hexdigest()[:16]
                 row = {
-                    "id": str(uuid.uuid4()),
+                    "id": row_id,
                     "scenario_id": scenario_id,
                     **spec,
                     "user_message": user_message,
                     "image": image,
-                    "metadata": task.get("metadata", {}),
+                    "metadata": task.get("metadata") or {},
                 }
                 f.write(json.dumps(row) + "\n")
-                total += 1
 
-    return name, total
+    logger.info("Prepared %d rows -> %s", n * len(cfg["tasks"]), input_path)
+    return input_path
 
 
-async def run(
-    name: str,
-    agent: Agent,
-    tool_definitions: dict,
-    on_row_done: Callable[[], Any] | None = None,
-) -> tuple[int, int]:
-    input_path = config.input_path / name
-    output_path = config.output_path / name
+async def run_eval(agent: Agent, input_jsonl: str | Path, output_jsonl: str | Path) -> tuple[int, int]:
+    input_path = Path(input_jsonl)
+    output_path = Path(output_jsonl)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     completed: set[str] = set()
     if output_path.exists():
         with open(output_path) as f:
             for line in f:
-                row = json.loads(line)
+                row: dict = json.loads(line)
                 if row.get("error") is None:
                     completed.add(row["id"])
 
@@ -126,14 +68,11 @@ async def run(
         rows = [json.loads(line) for line in f]
 
     succeeded = failed = 0
+    pending = [row for row in rows if row["id"] not in completed]
+    logger.info("Running %s: %d rows (%d already done)", input_path.stem, len(pending), len(completed))
 
     with open(output_path, "a") as f:
-        for row in rows:
-            if row["id"] in completed:
-                if on_row_done:
-                    on_row_done()
-                continue
-
+        for row in tqdm(pending, desc=output_path.stem, unit="row"):
             try:
                 result = await run_agent(
                     agent,
@@ -143,7 +82,6 @@ async def run(
                 )
                 output_row = {
                     "id": row["id"],
-                    "tool_definitions": tool_definitions,
                     "output": result.output,
                     "messages": to_jsonable_python(result.all_messages),
                     "usage": to_jsonable_python(result.usage),
@@ -153,7 +91,6 @@ async def run(
             except Exception as e:
                 output_row = {
                     "id": row["id"],
-                    "tool_definitions": tool_definitions,
                     "output": None,
                     "messages": [],
                     "usage": None,
@@ -162,7 +99,5 @@ async def run(
                 failed += 1
 
             f.write(json.dumps(output_row) + "\n")
-            if on_row_done:
-                on_row_done()
 
     return succeeded, failed
