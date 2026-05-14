@@ -1,8 +1,7 @@
 name: gear_design
-file: gear_design.jsonl
-n: 1
+n: 3
 provider: openai
-model: gpt-4o-mini
+model: gpt-5.4-mini
 prompt_name: agent
 tools:
   - calc.convert_speed
