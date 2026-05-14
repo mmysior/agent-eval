@@ -56,3 +56,32 @@ agent_no_tools   = get_agent()
 ```
 
 This gives you a direct comparison between the agent with and without tools on the same scenarios.
+
+## MCP Server
+
+Tools are also exposed as an MCP server over Streamable HTTP for testing with external clients (e.g. LM Studio):
+
+```bash
+just mcp
+# or
+uv run python -m agent_eval.servers.mcp
+# server listens on http://localhost:8000/mcp
+```
+
+### Adding to LM Studio
+
+1. Start the MCP server (see above)
+2. In LM Studio, open **Settings → MCP Servers** and edit `mcp.json`
+3. Add the following entry:
+
+```json
+{
+  "mcpServers": {
+    "agent-eval": {
+      "url": "http://localhost:8000/mcp"
+    }
+  }
+}
+```
+
+4. Reload LM Studio — the tools will appear in the model's tool list.

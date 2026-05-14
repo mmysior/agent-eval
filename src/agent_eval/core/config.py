@@ -44,6 +44,13 @@ class Config(BaseSettings):
     LANGFUSE_BASE_URL: str = ""
 
     # ==========================================
+    # MCP Server
+    # ==========================================
+    MCP_HOST: str = "localhost"
+    MCP_PORT: int = 8000
+    MCP_NAME: str = "agent-eval"
+
+    # ==========================================
     # File Paths
     # ==========================================
     PROJECT_ROOT: Path = _get_project_root()
