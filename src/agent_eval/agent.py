@@ -9,9 +9,9 @@ from pydantic_ai.messages import ModelMessage
 from pydantic_ai.settings import ModelSettings
 from pydantic_ai.usage import RunUsage, UsageLimits
 
-from llm_agent_template.core.config import config
-from llm_agent_template.core.prompts import get_prompt
-from llm_agent_template.core.providers import get_model
+from agent_eval.core.config import config
+from agent_eval.core.prompts import get_prompt
+from agent_eval.core.providers import get_model
 
 
 @dataclass

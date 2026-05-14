@@ -1,6 +1,6 @@
 from typing import Literal
 
-import llm_agent_template.functions.calc as calc_functions
+import agent_eval.functions.calc as calc_functions
 
 
 async def convert_speed(value: float, from_unit: Literal["rpm", "rad_s"]) -> str:

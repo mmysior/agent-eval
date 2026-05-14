@@ -4,7 +4,7 @@ import colorlog
 from langfuse import Langfuse
 from tqdm import tqdm
 
-from llm_agent_template.core.config import config
+from agent_eval.core.config import config
 
 
 class TqdmHandler(colorlog.StreamHandler):

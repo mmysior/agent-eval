@@ -4,9 +4,9 @@ import sys
 
 from tqdm import tqdm
 
-from llm_agent_template.core.config import config
-from llm_agent_template.core.logging import setup_logging
-from llm_agent_template.pipeline import agent_from_yaml, analyze, prepare, run
+from agent_eval.core.config import config
+from agent_eval.core.logging import setup_logging
+from agent_eval.pipeline import agent_from_yaml, analyze, prepare, run
 
 logger = logging.getLogger(__name__)
 

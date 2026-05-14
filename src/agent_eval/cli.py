@@ -7,9 +7,9 @@ from rich.progress import BarColumn, MofNCompleteColumn, Progress, SpinnerColumn
 from rich.rule import Rule
 from rich.table import Table
 
-from llm_agent_template.core.config import config
-from llm_agent_template.core.logging import setup_logging
-from llm_agent_template.pipeline import FileStats, agent_from_yaml, analyze, prepare, run
+from agent_eval.core.config import config
+from agent_eval.core.logging import setup_logging
+from agent_eval.pipeline import FileStats, agent_from_yaml, analyze, prepare, run
 
 ORANGE = "dark_orange"
 GRAY = "grey50"
@@ -22,9 +22,11 @@ def _print_preamble(stats: list[FileStats]) -> None:
     remaining = sum(s.remaining for s in stats)
 
     console.print()
-    console.print(Rule(
-        f"[{ORANGE}]Agent Run[/{ORANGE}] [{GRAY}]— {len(stats)} file(s), {remaining}/{total} generations pending[/{GRAY}]"
-    ))
+    console.print(
+        Rule(
+            f"[{ORANGE}]Agent Run[/{ORANGE}] [{GRAY}]— {len(stats)} file(s), {remaining}/{total} generations pending[/{GRAY}]"
+        )
+    )
     console.print()
 
     table = Table(show_header=True, header_style=GRAY, box=None, pad_edge=False, show_edge=False)

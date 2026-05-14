@@ -10,9 +10,9 @@ import yaml
 from pydantic_ai import Agent
 from pydantic_core import to_jsonable_python
 
-from llm_agent_template.agent import get_agent, run_agent
-from llm_agent_template.core.config import config
-from llm_agent_template.tools import extract_definitions, load_tools
+from agent_eval.agent import get_agent, run_agent
+from agent_eval.core.config import config
+from agent_eval.tools import extract_definitions, load_tools
 
 
 @dataclass
