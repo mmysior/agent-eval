@@ -1,4 +1,5 @@
 import logging
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, cast
 
@@ -99,6 +100,7 @@ def load_template_source(template_name: str, env: Environment) -> TemplateSource
         ) from e
 
 
+@lru_cache
 def get_prompt(name: str, templates_dir: Optional[str] = None) -> PromptModel:
     env = _get_env(templates_dir)
     template = load_template_source(f"{name}.j2", env)
