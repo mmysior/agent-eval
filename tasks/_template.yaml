@@ -1,0 +1,49 @@
+name: gear_design
+input_file: data/input/gear_design.jsonl
+output_file: data/output/gear_design.jsonl
+provider: openai
+model: gpt-4o-mini
+prompt_name: agent
+
+tasks:
+  # --- No tools required ---
+  - user_message: "What is a gear ratio and why does it matter in mechanical design?"
+    image: null
+    metadata:
+      requires_tools: false
+      category: theory
+
+  - user_message: "Explain the difference between spur gears and helical gears."
+    image: null
+    metadata:
+      requires_tools: false
+      category: theory
+
+  - user_message: What is shown on this image?
+    image: data/images/gear.png
+    metadata: null
+
+  # --- Tools required ---
+  - user_message: "Convert 1500 RPM to rad/s."
+    image: null
+    metadata:
+      requires_tools: true
+      category: unit_conversion
+      tool: convert_speed
+
+  - user_message: "A motor produces 50 N·m of torque at 3000 RPM. What is the output power?"
+    image: null
+    metadata:
+      requires_tools: true
+      category: power
+      tool: calculate_power
+
+  - user_message: >
+      I have a gear pair where the driver has 20 teeth and the driven gear has 60 teeth.
+      The input torque is 10 N·m at 1000 RPM and the mesh efficiency is 0.95.
+      What are the gear ratio, output torque, and output speed?
+    image: null
+    metadata:
+      requires_tools: true
+      category: gear_stage
+      tool: calculate_transmission

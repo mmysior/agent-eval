@@ -1,20 +1,20 @@
 import json
 import logging
 import uuid
-from collections.abc import Awaitable, Callable
 from pathlib import Path
 
 import yaml
+from pydantic_ai import Agent
 from pydantic_core import to_jsonable_python
 
-from llm_agent_template.agent import AgentResult
+from llm_agent_template.agent import run_agent
 
 logger = logging.getLogger(__name__)
 
 
 async def run_pipeline(
     tasks_yaml: str | Path,
-    agent: Callable[[str], Awaitable[AgentResult]],
+    agent: Agent,
 ) -> None:
     with open(tasks_yaml) as f:
         config: dict = yaml.safe_load(f)
@@ -43,7 +43,7 @@ async def run_pipeline(
     with open(output_path, "w") as f:
         for i, row in enumerate(rows, 1):
             logger.info("[%d/%d] %s...", i, len(rows), row["user_message"][:20])
-            result = await agent(row["user_message"])
+            result = await run_agent(agent, row["user_message"], image_path=row.get("image"))
             output_row = {
                 "id": row["id"],
                 "user_message": row["user_message"],

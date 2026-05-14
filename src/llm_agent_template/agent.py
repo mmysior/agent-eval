@@ -1,8 +1,10 @@
+import mimetypes
 from dataclasses import dataclass
 from functools import lru_cache
+from pathlib import Path
 from typing import Callable
 
-from pydantic_ai import Agent, Tool
+from pydantic_ai import Agent, BinaryContent, Tool
 from pydantic_ai.messages import ModelMessage
 from pydantic_ai.usage import RunUsage, UsageLimits
 
@@ -36,10 +38,18 @@ def get_agent(
 async def run_agent(
     agent: Agent,
     user_message: str,
+    image_path: str | Path | None = None,
     message_history: list[ModelMessage] | None = None,
 ) -> AgentResult:
+    if image_path is not None:
+        path = Path(image_path)
+        media_type, _ = mimetypes.guess_type(str(path))
+        prompt = [user_message, BinaryContent(data=path.read_bytes(), media_type=media_type or "image/png")]
+    else:
+        prompt = user_message
+
     result = await agent.run(
-        user_message,
+        prompt,
         message_history=message_history or [],
         usage_limits=UsageLimits(request_limit=config.TOOL_ITERATION_LIMIT),
     )
