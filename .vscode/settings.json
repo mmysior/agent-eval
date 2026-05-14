@@ -5,10 +5,7 @@
   "editor.tabSize": 4,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
-  "editor.rulers": [
-    88,
-    120
-  ],
+  "editor.rulers": [120],
   "editor.wordWrap": "off",
   "editor.minimap.enabled": false,
   "editor.bracketPairColorization.enabled": true,
@@ -53,12 +50,7 @@
     "reportUnusedImport": "information",
     "reportUnusedVariable": "warning"
   },
-  "python.analysis.extraPaths": [
-    "${workspaceFolder}/packages/idm-core/src",
-    "${workspaceFolder}/packages/idm-triz/src",
-    "${workspaceFolder}/packages/idm-kano/src",
-    "${workspaceFolder}/packages/idm-cli/src",
-  ],
+  "python.analysis.extraPaths": ["${workspaceFolder}/src"],
   "python.envFile": "${workspaceFolder}/.env",
   "python.terminal.activateEnvironment": false,
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
@@ -92,10 +84,7 @@
   "python.testing.cwd": "${workspaceFolder}",
   "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "python.testing.pytestArgs": [
-    "packages/",
-    "-v"
-  ],
+  "python.testing.pytestArgs": ["-v"],
   // Git
   "git.autofetch": true,
   "git.confirmSync": false,
