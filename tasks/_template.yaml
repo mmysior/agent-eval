@@ -1,48 +1,43 @@
-name: gear_design
+# Number of repetitions per task (for evaluation of repeatability)
 n: 3
+
+# Model configuration
 provider: openai
-model: gpt-5.4-mini
-prompt_name: agent
-tools:
-  - calc.convert_speed
-  - calc.calculate_power
-  - calc.calculate_transmission
+model: gpt-4o
 model_settings:
   temperature: 1.0
   max_tokens: 4096
 
 tasks:
-  # --- No tools required ---
+  # Each task is a single scenario sent to the agent.
+  # user_message: the user message sent to the agent
+  # image: path to an image file, or null. Starting with the data/...
+  # metadata: yours — use it however you like for analysis (category, expected output, tags, etc.)
+
   - user_message: "What is a gear ratio and why does it matter in mechanical design?"
     image: null
     metadata:
-      requires_tools: false
       category: theory
 
   - user_message: "Explain the difference between spur gears and helical gears."
     image: null
     metadata:
-      requires_tools: false
       category: theory
 
-  - user_message: What is shown on this image?
+  - user_message: "What is shown on this image?"
     image: data/images/gear.png
-    metadata: null
+    metadata:
+      category: vision
 
-  # --- Tools required ---
   - user_message: "Convert 1500 RPM to rad/s."
     image: null
     metadata:
-      requires_tools: true
       category: unit_conversion
-      tool: convert_speed
 
   - user_message: "A motor produces 50 N·m of torque at 3000 RPM. What is the output power?"
     image: null
     metadata:
-      requires_tools: true
       category: power
-      tool: calculate_power
 
   - user_message: >
       I have a gear pair where the driver has 20 teeth and the driven gear has 60 teeth.
@@ -50,6 +45,4 @@ tasks:
       What are the gear ratio, output torque, and output speed?
     image: null
     metadata:
-      requires_tools: true
       category: gear_stage
-      tool: calculate_transmission
