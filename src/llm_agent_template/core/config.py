@@ -51,6 +51,7 @@ class Config(BaseSettings):
     PROMPTS_DIR: str = "prompts"
     CONFIG_DIR: str = "config"
     DATA_DIR: str = "data"
+    TASKS_DIR: str = "tasks"
 
     @property
     def prompts_path(self) -> Path:
@@ -67,6 +68,11 @@ class Config(BaseSettings):
     @property
     def data_path(self) -> Path:
         path = Path(self.DATA_DIR)
+        return path if path.is_absolute() else self.PROJECT_ROOT / path
+
+    @property
+    def tasks_path(self) -> Path:
+        path = Path(self.TASKS_DIR)
         return path if path.is_absolute() else self.PROJECT_ROOT / path
 
     @property
