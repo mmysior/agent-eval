@@ -57,6 +57,30 @@ agent_no_tools   = get_agent()
 
 This gives you a direct comparison between the agent with and without tools on the same scenarios.
 
+## Running evaluations in Docker
+
+For long-running eval batches, Docker lets you fire off the whole run in the background and walk away.
+
+First, generate the input files locally:
+
+```bash
+uv run agent-eval prepare-input tasks/*.yaml
+```
+
+Then launch the container:
+
+```bash
+docker compose up -d
+```
+
+The container runs `main.py` against all files in `data/input/` and writes results to `data/output/`. The container exits when the batch is complete.
+
+Follow logs at any time:
+
+```bash
+docker compose logs -f
+```
+
 ## MCP Server
 
 Tools are also exposed as an MCP server over Streamable HTTP for testing with external clients (e.g. LM Studio):
