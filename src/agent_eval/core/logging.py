@@ -1,10 +1,7 @@
 import logging
 
 import colorlog
-from langfuse import Langfuse
 from tqdm import tqdm
-
-from agent_eval.core.config import config
 
 
 class TqdmHandler(colorlog.StreamHandler):
@@ -15,7 +12,6 @@ class TqdmHandler(colorlog.StreamHandler):
 def setup_logging():
     root_logger = logging.getLogger()
 
-    # Don't add handlers if they already exist (prevents duplicate logs)
     if root_logger.handlers:
         return
 
@@ -36,12 +32,3 @@ def setup_logging():
 
     root_logger.setLevel(logging.INFO)
     root_logger.addHandler(handler)
-
-
-def setup_langfuse():
-    if config.LANGFUSE_TRACING_ENABLED:
-        Langfuse(
-            public_key=config.LANGFUSE_PUBLIC_KEY,
-            secret_key=config.LANGFUSE_SECRET_KEY,
-            host=config.LANGFUSE_BASE_URL,
-        )

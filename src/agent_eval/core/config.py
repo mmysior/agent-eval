@@ -36,14 +36,6 @@ class Config(BaseSettings):
     MISTRAL_API_KEY: str = ""
 
     # ==========================================
-    # Observability (Langfuse)
-    # ==========================================
-    LANGFUSE_TRACING_ENABLED: bool = False
-    LANGFUSE_PUBLIC_KEY: str = ""
-    LANGFUSE_SECRET_KEY: str = ""
-    LANGFUSE_BASE_URL: str = ""
-
-    # ==========================================
     # MCP Server
     # ==========================================
     MCP_HOST: str = "localhost"
