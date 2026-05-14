@@ -1,5 +1,4 @@
 import mimetypes
-from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 from typing import Callable
@@ -7,18 +6,12 @@ from typing import Callable
 from pydantic_ai import Agent, BinaryContent, Tool
 from pydantic_ai.messages import ModelMessage
 from pydantic_ai.settings import ModelSettings
-from pydantic_ai.usage import RunUsage, UsageLimits
+from pydantic_ai.usage import UsageLimits
 
 from agent_eval.core.config import config
 from agent_eval.core.prompts import get_prompt
 from agent_eval.core.providers import get_model
-
-
-@dataclass
-class AgentResult:
-    output: str
-    all_messages: list[ModelMessage]
-    usage: RunUsage
+from agent_eval.schemas import AgentResult
 
 
 @lru_cache
