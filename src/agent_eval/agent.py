@@ -45,6 +45,8 @@ async def run_agent(
 ) -> AgentResult:
     if image_path is not None:
         path = Path(image_path)
+        if not path.is_absolute():
+            path = config.PROJECT_ROOT / path
         media_type, _ = mimetypes.guess_type(str(path))
         prompt = [user_message, BinaryContent(data=path.read_bytes(), media_type=media_type or "image/png")]
     else:
