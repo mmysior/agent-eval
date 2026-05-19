@@ -4,16 +4,18 @@ from typing import Any, Callable
 from pydantic_ai.models.anthropic import AnthropicModel
 from pydantic_ai.models.mistral import MistralModel
 from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.models.openrouter import OpenRouterModel
 from pydantic_ai.providers.anthropic import AnthropicProvider
 from pydantic_ai.providers.mistral import MistralProvider
 from pydantic_ai.providers.ollama import OllamaProvider
 from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_ai.providers.openrouter import OpenRouterProvider
 from pydantic_ai.settings import ModelSettings
 
 from .config import config
 
 # Type definitions
-type LLModel = OpenAIChatModel | AnthropicModel | MistralModel
+type LLModel = OpenAIChatModel | AnthropicModel | MistralModel | OpenRouterModel
 type ModelFactoryFn = Callable[[str], LLModel]
 
 model_factories: dict[str, ModelFactoryFn] = {}
@@ -57,6 +59,14 @@ def get_together_model(model_name: str, **kwargs: Any) -> OpenAIChatModel:
             base_url="https://api.together.xyz/v1",
             api_key=config.TOGETHER_API_KEY,
         ),
+        settings=ModelSettings(**kwargs),
+    )
+
+@register_model_provider("openrouter")
+def get_openrouter_model(model_name: str, **kwargs: Any) -> OpenRouterModel:
+    return OpenRouterModel(
+        model_name=model_name,
+        provider=OpenRouterProvider(api_key=config.OPENROUTER_API_KEY),
         settings=ModelSettings(**kwargs),
     )
 
