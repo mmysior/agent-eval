@@ -1,12 +1,12 @@
 # Number of repetitions per task (for evaluation of repeatability)
-n: 3
+n: 1
 
 # Model configuration
-provider: openai
-model: gpt-4o
+provider: together
+model: Qwen/Qwen3.5-397B-A17B
 model_settings:
-  temperature: 1.0
-  max_tokens: 4096
+  temperature: 0.1
+  max_tokens: 8192
 
 tasks:
   # Each task is a single scenario sent to the agent.
@@ -15,11 +15,6 @@ tasks:
   # metadata: yours — use it however you like for analysis (category, expected output, tags, etc.)
 
   - user_message: "What is a gear ratio and why does it matter in mechanical design?"
-    image: null
-    metadata:
-      category: theory
-
-  - user_message: "Explain the difference between spur gears and helical gears."
     image: null
     metadata:
       category: theory
@@ -33,11 +28,6 @@ tasks:
     image: null
     metadata:
       category: unit_conversion
-
-  - user_message: "A motor produces 50 N·m of torque at 3000 RPM. What is the output power?"
-    image: null
-    metadata:
-      category: power
 
   - user_message: >
       I have a gear pair where the driver has 20 teeth and the driven gear has 60 teeth.
