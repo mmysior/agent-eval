@@ -35,6 +35,8 @@ async def run_agent(
     image_path: str | Path | None = None,
     model_settings: dict | None = None,
     message_history: list[ModelMessage] | None = None,
+    provider: str | None = None,
+    model: str | None = None,
 ) -> AgentResult:
     if image_path is not None:
         path = Path(image_path)
@@ -45,11 +47,13 @@ async def run_agent(
     else:
         prompt = user_message
 
+    override = get_model(provider, model) if provider and model else None
     result = await agent.run(
         prompt,
         message_history=message_history or [],
         usage_limits=UsageLimits(request_limit=config.TOOL_ITERATION_LIMIT),
         model_settings=ModelSettings(**(model_settings or {})),
+        model=override,
     )
     return AgentResult(
         output=result.output,

@@ -78,6 +78,8 @@ async def run_eval(agent: Agent, input_jsonl: str | Path, output_jsonl: str | Pa
                     row.user_message,
                     image_path=row.image,
                     model_settings=row.model_settings,
+                    provider=row.provider or None,
+                    model=row.model or None,
                 )
                 output_row = OutputRow(
                     id=row.id,

@@ -6,11 +6,9 @@ from agent_eval import get_agent, run_eval
 from agent_eval.core.config import config
 from agent_eval.core.logging import setup_logging
 from agent_eval.tools import tools
+from agent_eval.utils import read_first_row
 
 logger = logging.getLogger(__name__)
-
-agent_with_tools = get_agent(tools=tools)
-agent_no_tools = get_agent()
 
 
 async def main() -> None:
@@ -21,6 +19,9 @@ async def main() -> None:
 
     for input_file in input_files:
         stem = input_file.stem
+        first = read_first_row(input_file)
+        agent_with_tools = get_agent(provider=first.provider, model=first.model, tools=tools)
+        agent_no_tools = get_agent(provider=first.provider, model=first.model)
         await run_eval(agent_with_tools, input_file, config.output_path / f"{stem}_with_tools.jsonl")
         await run_eval(agent_no_tools, input_file, config.output_path / f"{stem}_no_tools.jsonl")
 
